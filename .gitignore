@@ -39,5 +39,4 @@ build/
 # Mac/Linux swap/temp files
 *.swp
 *.swo
-
 .env

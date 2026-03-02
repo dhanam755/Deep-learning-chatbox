@@ -2,8 +2,6 @@ import pandas as pd
 import pickle
 import os
 from sklearn.preprocessing import LabelEncoder
-
-# Load your dataset
 df = pd.read_csv("data/intents.csv")
 
 labels = df["intent"].tolist()

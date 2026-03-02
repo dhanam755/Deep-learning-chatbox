@@ -3,7 +3,6 @@ import string
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 
-# Download if missing
 try:
     nltk.data.find("tokenizers/punkt")
 except LookupError:

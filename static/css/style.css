@@ -1,88 +1,3 @@
-/* body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: url('/static/css/bg.png') no-repeat center center fixed;
-    background-size: cover;
-}
-
-.chat-container {
-    width: 60%;
-    height: 90vh;
-    margin: 2% auto;
-    background: rgba(0, 0, 0, 0.85);
-    border-radius: 15px;
-    display: flex;
-    flex-direction: column;
-    color: white;
-}
-
-.header {
-    padding: 15px;
-    font-size: 20px;
-    background: #111;
-    border-radius: 15px 15px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header button {
-    background: #ff4d4d;
-    border: none;
-    padding: 6px 12px;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.chat-box {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.user-message {
-    background: #0084ff;
-    padding: 10px;
-    border-radius: 10px;
-    margin: 8px 0;
-    align-self: flex-end;
-    max-width: 70%;
-}
-
-.bot-message {
-    background: #333;
-    padding: 10px;
-    border-radius: 10px;
-    margin: 8px 0;
-    align-self: flex-start;
-    max-width: 70%;
-}
-
-.input-container {
-    display: flex;
-    padding: 15px;
-    background: #111;
-    border-radius: 0 0 15px 15px;
-}
-
-input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-}
-
-button {
-    margin-left: 10px;
-    padding: 10px 15px;
-    border-radius: 10px;
-    border: none;
-    background: #00c853;
-    color: white;
-    cursor: pointer;
-} */
 
 body {
     margin: 0;
@@ -95,7 +10,6 @@ body {
     height: 100vh;
 }
 
-/* Glass container */
 .chat-container {
     width: 65%;
     height: 90vh;
@@ -107,7 +21,6 @@ body {
     box-shadow: 0 0 40px rgba(194, 184, 184, 0.6);
 }
 
-/* Header */
 .header {
     padding: 18px;
     font-size: 20px;
@@ -118,7 +31,7 @@ body {
     align-items: center;
 }
 
-/* Chat area */
+
 .chat-box {
     flex: 1;
     padding: 20px;
@@ -128,7 +41,6 @@ body {
     gap: 12px;
 }
 
-/* Scrollbar styling */
 .chat-box::-webkit-scrollbar {
     width: 6px;
 }
@@ -137,7 +49,7 @@ body {
     border-radius: 10px;
 }
 
-/* User message */
+
 .user-message {
     align-self: flex-end;
     background: #00c853;
@@ -148,7 +60,7 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Bot message */
+
 .bot-message {
     align-self: flex-start;
     background: #2c2c2c;
@@ -159,7 +71,7 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Input area */
+
 .input-container {
     display: flex;
     padding: 15px;
@@ -190,7 +102,7 @@ button:hover {
     background: #00a843;
 }
 
-/* Animation */
+
 @keyframes fadeIn {
     from {opacity: 0; transform: translateY(5px);}
     to {opacity: 1; transform: translateY(0);}

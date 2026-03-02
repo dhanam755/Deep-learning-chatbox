@@ -30,7 +30,7 @@ async function sendMessage() {
     addMessage("user", message);
     input.value = "";
 
-    // Show typing indicator
+
     const typingDiv = addMessage("bot", "Bot is typing...");
 
     try {
@@ -42,10 +42,9 @@ async function sendMessage() {
 
         const data = await response.json();
 
-        // Remove typing indicator
         typingDiv.remove();
 
-        // Safely get bot response
+
         const botReply = (data && typeof data.response === "string") 
                          ? data.response 
                          : "Sorry, I couldn't generate a response.";
@@ -66,7 +65,7 @@ function addMessage(sender, text) {
     msgDiv.innerText = text;
     chatBox.appendChild(msgDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
-    return msgDiv; // For typing indicator removal
+    return msgDiv; 
 }
 
 async function clearChat() {
@@ -74,7 +73,7 @@ async function clearChat() {
     document.getElementById("chat-box").innerHTML = "";
 }
 
-// Press Enter to send
+
 document.getElementById("user-input").addEventListener("keypress", function(e) {
     if (e.key === "Enter") sendMessage();
 });

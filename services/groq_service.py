@@ -19,7 +19,7 @@ def get_groq_response(user_message):
                     "content": user_message
                 }
             ],
-            model="llama-3.1-8b-instant",  # ✅ Updated model
+            model="llama-3.1-8b-instant", 
             temperature=0.7,
             max_tokens=500
         )

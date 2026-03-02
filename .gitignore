@@ -1,0 +1,43 @@
+# Python cache & environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+
+# VS Code / IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Database / MongoDB exports (do not commit real data)
+database/*.bson
+database/*.json
+database/*.dump
+
+# Large model files (Git LFS can handle them separately)
+models/bert_intent_model/pytorch_model.bin
+models/bert_intent_model/model.safetensors
+models/bert_intent_model/tokenizer.json
+models/bert_intent_model/vocab.txt
+models/bert_intent_model/tokenizer_config.json
+
+# Label encoders
+models/label_encoder.pkl
+
+# Temporary / system files
+.DS_Store
+Thumbs.db
+
+# Node / frontend artifacts (if any)
+node_modules/
+dist/
+build/
+
+# Mac/Linux swap/temp files
+*.swp
+*.swo
+
+.env

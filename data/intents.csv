@@ -1,0 +1,15 @@
+text,intent
+hello,greeting
+hi,greeting
+hey there,greeting
+good morning,greeting
+good evening,greeting
+bye,goodbye
+see you later,goodbye
+goodbye,goodbye
+thanks,thanks
+thank you so much,thanks
+appreciate it,thanks
+what is your name,about_bot
+who are you,about_bot
+how are you,smalltalk

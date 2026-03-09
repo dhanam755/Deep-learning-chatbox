@@ -11,3 +11,4 @@ flask-login
 bcrypt
 requests
 gunicorn
+groq

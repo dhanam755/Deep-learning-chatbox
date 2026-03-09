@@ -9,3 +9,6 @@ pymongo
 python-dotenv
 flask-login
 bcrypt
+requests
+tensorflow
+gunicorn

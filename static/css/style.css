@@ -45,9 +45,11 @@ body {
     width: 6px;
 }
 .chat-box::-webkit-scrollbar-thumb {
-    background: #444;
+    background: #b1a8a8;
     border-radius: 10px;
 }
+
+
 .logout-btn{
 
 position:fixed;
@@ -130,4 +132,8 @@ button:hover {
     to {opacity: 1; transform: translateY(0);}
 } 
 
+ 
 
+
+
+ 

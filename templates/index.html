@@ -1,82 +1,114 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat AI</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<title>Chat AI</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
+
 <body>
 
+<a href="/logout" class="logout-btn">Logout</a>
+
 <div class="chat-container">
-    <div class="header">
-        🤖 Chat AI
-        <button onclick="clearChat()">Clear</button>
-    </div>
 
-    <div id="chat-box" class="chat-box"></div>
+<div class="header">
+🤖 Chat AI
+<button onclick="clearChat()">Clear</button>
+</div>
 
-    <div class="input-container">
-        <input type="text" id="user-input" placeholder="Message Chat AI...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
+<div id="chat-box" class="chat-box"></div>
+
+<div class="input-container">
+<input type="text" id="user-input" placeholder="Message Chat AI...">
+<button onclick="sendMessage()">Send</button>
+</div>
+
 </div>
 
 <script>
+
 async function sendMessage() {
-    const input = document.getElementById("user-input");
-    const message = input.value.trim();
-    if (!message) return;
 
-    addMessage("user", message);
-    input.value = "";
+const input = document.getElementById("user-input");
 
+const message = input.value.trim();
 
-    const typingDiv = addMessage("bot", "Bot is typing...");
+if (!message) return;
 
-    try {
-        const response = await fetch("/chat", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ message: message })
-        });
+addMessage("user", message);
 
-        const data = await response.json();
+input.value = "";
 
-        typingDiv.remove();
+const typingDiv = addMessage("bot", "Bot is typing...");
 
+try {
 
-        const botReply = (data && typeof data.response === "string") 
-                         ? data.response 
-                         : "Sorry, I couldn't generate a response.";
+const response = await fetch("/chat", {
+method: "POST",
+headers: {"Content-Type": "application/json"},
+body: JSON.stringify({ message: message })
+});
 
-        addMessage("bot", botReply);
+const data = await response.json();
 
-    } catch (error) {
-        console.error(error);
-        if (typingDiv) typingDiv.remove();
-        addMessage("bot", "Server error occurred.");
-    }
+typingDiv.remove();
+
+const botReply =
+(data && typeof data.response === "string")
+? data.response
+: "Sorry, I couldn't generate a response.";
+
+addMessage("bot", botReply);
+
+}
+
+catch (error) {
+
+console.error(error);
+
+if (typingDiv) typingDiv.remove();
+
+addMessage("bot", "Server error occurred.");
+
+}
+
 }
 
 function addMessage(sender, text) {
-    const chatBox = document.getElementById("chat-box");
-    const msgDiv = document.createElement("div");
-    msgDiv.className = sender === "user" ? "user-message" : "bot-message";
-    msgDiv.innerText = text;
-    chatBox.appendChild(msgDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    return msgDiv; 
+
+const chatBox = document.getElementById("chat-box");
+
+const msgDiv = document.createElement("div");
+
+msgDiv.className = sender === "user" ? "user-message" : "bot-message";
+
+msgDiv.innerText = text;
+
+chatBox.appendChild(msgDiv);
+
+chatBox.scrollTop = chatBox.scrollHeight;
+
+return msgDiv;
+
 }
 
 async function clearChat() {
-    await fetch("/clear");
-    document.getElementById("chat-box").innerHTML = "";
+
+await fetch("/clear");
+
+document.getElementById("chat-box").innerHTML = "";
+
 }
 
+document.getElementById("user-input")
+.addEventListener("keypress", function(e) {
 
-document.getElementById("user-input").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") sendMessage();
+if (e.key === "Enter") sendMessage();
+
 });
+
 </script>
 
 </body>

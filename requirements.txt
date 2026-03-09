@@ -7,3 +7,5 @@ pandas
 nltk
 pymongo
 python-dotenv
+flask-login
+bcrypt

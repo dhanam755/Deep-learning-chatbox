@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://chatbotuser:Jesu1981@cluster0.pswrz7q.mongodb.net/")
 DB_NAME = "chatbot_db"
 COLLECTION_NAME = "conversations"
 MODEL_PATH = "models/bert_intent_model"

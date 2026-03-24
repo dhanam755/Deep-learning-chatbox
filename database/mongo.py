@@ -55,7 +55,7 @@
 from pymongo import MongoClient
 from datetime import datetime
 
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb+srv://chatbotuser:Jesu1981@cluster0.pswrz7q.mongodb.net/chatbot_db")
 db = client["chatbot_db"]
 
 chat_collection = db["chats"]

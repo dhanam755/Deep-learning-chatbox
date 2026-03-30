@@ -1,5 +1,5 @@
 
-body {
+body.chat-page {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     background: url('bg.jpg') no-repeat center center fixed;
@@ -8,6 +8,19 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+}
+
+body.dark-theme {
+    background: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+body.login-page.dark-theme, body.register-page.dark-theme {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
 }
 
 .chat-container {
@@ -50,28 +63,149 @@ body {
 }
 
 
-.logout-btn{
-
-position:fixed;
-top:20px;
-right:30px;
-
-background:#075225;
-color:white;
-
-padding:10px 20px;
-
-border-radius:25px;
-
-text-decoration:none;
-font-weight:bold;
-
-box-shadow:0 0 10px rgba(0,0,0,0.4);
-
+.logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    background: #075225;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
-.logout-btn:hover{
-background:#2aff8a;
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+    .login-card, .dark-card, .register-card {
+        margin: 1rem;
+        max-width: none;
+        width: calc(100% - 2rem);
+        padding: 1.5rem !important;
+    }
+    
+    .login-hero, .register-hero {
+        padding: 1rem !important;
+    }
+    
+    .brand-logo {
+        font-size: 2rem !important;
+    }
+
+    /* Chatbox Mobile Fix - Full Height, Proper Padding */
+    .app-container, body.chat-page {
+        height: 100vh !important;
+        overflow: hidden;
+    }
+    
+    .chat-container {
+        width: 100% !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .chat-box {
+        padding: 1rem !important;
+    }
+    
+    .header {
+        padding: 1rem !important;
+    }
+    
+    .input-container {
+        padding: 1rem !important;
+    }
+    
+    /* Sidebar mobile */
+    .sidebar { transform: translateX(-100%); }
+    .sidebar:not(.collapsed) { transform: translateX(0); }
+}
+
+.password-toggle {
+    position: relative;
+}
+
+.password-toggle input {
+    padding-right: 40px;
+}
+
+.password-toggle .btn-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+}
+
+.logout-btn:hover {
+    background: #2aff8a;
+}
+
+.dark-card {
+    max-width: 420px;
+    padding: 2.5rem !important;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #e0e0e0;
+}
+
+.dark-card .form-control, .dark-card .form-control::placeholder {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #e0e0e0;
+}
+
+.dark-card .form-label {
+    color: #f0f0f0 !important;
+}
+
+.btn-primary.dark-btn {
+    background: linear-gradient(45deg, #00c853, #00a843);
+    border: none;
+    font-weight: 600;
+}
+
+.btn-toggle {
+    color: #aaa;
+}
+
+.btn-toggle:hover {
+    color: #00c853;
+}
+
+.password-toggle {
+    position: relative;
+}
+
+.password-toggle input {
+    padding-right: 45px;
+}
+
+.password-toggle .btn-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.9rem;
 }
 
 .user-message {
@@ -130,7 +264,60 @@ button:hover {
 @keyframes fadeIn {
     from {opacity: 0; transform: translateY(5px);}
     to {opacity: 1; transform: translateY(0);}
-} 
+}
+
+.register-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.register-card {
+    max-width: 400px;
+    padding: 2rem !important;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.95);
+}
+
+.chatbot-page {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.chatbot-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 80vh;
+    display: flex;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.chat-sidebar {
+    width: 250px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px 0 0 20px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 20px 20px 0;
+}
+
+.navbar-brand-custom {
+    font-weight: bold;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
  
 

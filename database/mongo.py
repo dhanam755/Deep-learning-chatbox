@@ -51,11 +51,11 @@
 #     return jsonify({"response": response})
 
 
-
 from pymongo import MongoClient
+from config import MONGO_URI
 from datetime import datetime
 
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(MONGO_URI)
 db = client["chatbot_db"]
 
 chat_collection = db["chats"]

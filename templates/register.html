@@ -1,83 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
-
-<style>
-
-body{
-    font-family: Arial;
-    background:#696969;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-
-.box{
-    background:white;
-    padding:30px;
-    border-radius:10px;
-    width:300px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-h2{
-    text-align:center;
-}
-
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-}
-
-button{
-    width:100%;
-    padding:10px;
-    background:#2F4F4F;
-    background:;
-    border:none;
-    color:white;
-    cursor:pointer;
-}
-
-a{
-    text-decoration:none;
-    color:#228B22;
-}
-
-p{
-    text-align:center;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - ChatBox</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .register-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .brand-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
+<body class="dark-theme register-page">
+    <div class="register-hero">
+        <div class="dark-card card text-center p-4">
+            <div class="card-body">
+                <div class="brand-logo mb-4">ChatBox</div>
+                
+                <h2 class="h3 mb-4 fw-bold">Create Account</h2>
+                <p class="text-light mb-4 opacity-75">Join us today - It's free!</p>
+                
+                <form method="POST" novalidate>
+                    <div class="mb-4">
+                        <label for="username" class="form-label fw-semibold text-start d-block mb-2">Username</label>
+                        <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Enter a username" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="email" class="form-label fw-semibold text-start d-block mb-2">Email Address</label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="password-toggle mb-4">
+                        <label for="password" class="form-label fw-semibold text-start d-block mb-2">Password</label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Enter a password" required>
+                        <button type="button" class="btn-toggle mt-1">Show</button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary dark-btn btn-lg w-100 mb-3 fw-semibold py-3">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small opacity-75">Already have an account?</span>
+                    <a href="/login" class="btn btn-link p-0 text-success fw-semibold">Sign In</a>
+                </div>
+                
+                <hr class="my-4 opacity-25">
+                <p class="opacity-75 small mb-0">By registering, you agree to our Terms of Service and Privacy Policy.</p>
+            </div>
+        </div>
+    </div>
 
-<body>
-
-<div class="box">
-
-<h2>Create Account</h2>
-
-<form method="POST">
-
-<input type="text" name="username" placeholder="Username" required>
-
-<input type="email" name="email" placeholder="Email" required>
-
-<input type="password" name="password" placeholder="Password" required>
-
-<button type="submit">Register</button>
-
-</form>
-
-<p>Already have an account?</p>
-
-<p><a href="/login">Login</a></p>
-
-</div>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <!-- Custom Register JS -->
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, jsonify, redirect, session
 import logging
 
@@ -12,7 +11,6 @@ app.secret_key = "supersecretkey"
 logging.basicConfig(level=logging.INFO)
 
 
-# ---------------- BOT RESPONSE ---------------- #
 
 def get_bot_response(user_message):
     try:
@@ -28,24 +26,27 @@ def get_bot_response(user_message):
         return "Sorry, something went wrong."
 
 
-# ---------------- HOME PAGE ---------------- #
+
 
 @app.route("/")
 def home():
-
     if "user" not in session:
         return redirect("/login")
+    return render_template("chatgpt-full.html")
 
-    return render_template("index.html")
+
+@app.route("/chat")
+def chat():
+    if "user" not in session:
+        return redirect("/login")
+    return render_template("chatgpt-full.html")
 
 
-# ---------------- REGISTER ---------------- #
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
     if request.method == "POST":
-
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
@@ -57,13 +58,9 @@ def register():
     return render_template("register.html")
 
 
-# ---------------- LOGIN ---------------- #
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
         email = request.form["email"]
         password = request.form["password"]
 
@@ -78,12 +75,11 @@ def login():
     return render_template("login.html")
 
 
-# ---------------- CHAT API ---------------- #
 
-@app.route("/chat", methods=["POST"])
-def chat():
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
     try:
-
         if "user" not in session:
             return jsonify({"response": "Please login first."})
 
@@ -110,11 +106,10 @@ def chat():
         return jsonify({"response": "Server error occurred."})
 
 
-# ---------------- CHAT HISTORY ---------------- #
 
-@app.route("/history")
-def history():
 
+@app.route("/api/history")
+def api_history():
     if "user" not in session:
         return jsonify([])
 
@@ -123,17 +118,13 @@ def history():
     return jsonify(history)
 
 
-# ---------------- LOGOUT ---------------- #
 
 @app.route("/logout")
 def logout():
-
     session.pop("user", None)
 
     return redirect("/login")
 
-
-# ---------------- RUN APP ---------------- #
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False)

@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% block title %}Chat Dashboard - ChatBox{% endblock %}
+{% block body %}
+<div class="chat-app" data-user-name="{{ user.name if user else '' }}" data-user-email="{{ user.email if user else '' }}" data-initial-chat-id="{{ active_chat.id if active_chat else '' }}" data-initial-chat-title="{{ active_chat.title if active_chat else '' }}" data-initial-chat-model="{{ active_chat.model if active_chat else '' }}">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-mobile-header d-lg-none">
+        <div class="brand-mark brand-mark-compact">ChatBox</div>
+        <button class="icon-btn" id="sidebarCloseBtn" type="button" title="Close sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="profile-card">
+        <div class="avatar">{{ (user.name[:1] if user and user.name else 'U')|upper }}</div>
+        <div class="profile-copy">
+          <div class="profile-name">{{ user.name if user else 'User' }}</div>
+          <div class="profile-email">{{ user.email if user else '' }}</div>
+        </div>
+      </div>
+      <button class="btn btn-new-chat" id="newChatBtn" type="button">
+        <i class="fa-solid fa-plus"></i>
+        <span>New Chat</span>
+      </button>
+      <div class="sidebar-actions">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="chatSearch" type="search" class="form-control" placeholder="Search chats" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="chat-list" id="chatList" aria-label="Chat history">
+      {% for chat in chats %}
+      <button class="chat-item{% if active_chat and chat.id == active_chat.id %} active{% endif %}" data-chat-id="{{ chat.id }}" data-title="{{ chat.title }}" type="button">
+        <span class="chat-item-title">{{ chat.title }}</span>
+        <span class="chat-item-meta">{{ chat.message_count }} messages</span>
+      </button>
+      {% else %}
+      <div class="empty-history" id="emptyHistory">No chats yet</div>
+      {% endfor %}
+    </div>
+
+    <div class="sidebar-bottom">
+      <a href="{{ url_for('chat.settings') }}" class="sidebar-link">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="{{ url_for('auth.logout') }}" class="sidebar-link">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <main class="chat-main">
+    <header class="topbar">
+      <button class="icon-btn d-lg-none" id="sidebarToggle" type="button" title="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="title-stack">
+        <span class="eyebrow">AI workspace</span>
+        <h1 id="chatTitle">Start a new conversation</h1>
+      </div>
+      <div class="topbar-actions">
+        <select id="modelSelect" class="form-select form-select-sm" aria-label="AI model">
+          {% for model in available_models %}
+          <option value="{{ model }}">{{ model }}</option>
+          {% endfor %}
+        </select>
+        <button class="icon-btn" id="renameChatBtn" type="button" title="Rename chat" disabled>
+          <i class="fa-solid fa-pen"></i>
+        </button>
+        <button class="icon-btn danger" id="deleteChatBtn" type="button" title="Delete chat" disabled>
+          <i class="fa-solid fa-trash"></i>
+        </button>
+        <button class="icon-btn theme-toggle" id="themeToggle" type="button" title="Toggle theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </header>
+
+    <section class="messages-wrap">
+      <div class="welcome-panel" id="welcomePanel" data-aos="fade-up">
+        <div class="welcome-badge">ChatBox AI</div>
+        <h2>How can I help?</h2>
+        <p>Ask questions, draft content, explain code, or explore ideas with streamed Groq responses.</p>
+        <div class="prompt-grid">
+          <button type="button" data-prompt="Explain machine learning in simple terms">Explain machine learning</button>
+          <button type="button" data-prompt="Write a Python function that validates strong passwords">Write validation code</button>
+          <button type="button" data-prompt="Summarize best practices for Flask security">Review Flask security</button>
+        </div>
+      </div>
+      <div class="messages" id="messages" aria-live="polite"></div>
+    </section>
+
+    <section class="composer">
+      <div class="composer-tools">
+        <span id="charCount">0 / 4000</span>
+        <div class="composer-actions">
+          <button class="text-btn" id="regenerateBtn" type="button" disabled>
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Regenerate</span>
+          </button>
+          <button class="text-btn" id="exportTxtBtn" type="button" disabled>
+            <i class="fa-regular fa-file-lines"></i>
+            <span>TXT</span>
+          </button>
+          <button class="text-btn" id="exportPdfBtn" type="button" disabled>
+            <i class="fa-regular fa-file-pdf"></i>
+            <span>PDF</span>
+          </button>
+        </div>
+      </div>
+      <div class="composer-box">
+        <textarea id="messageInput" class="form-control composer-input" rows="1" placeholder="Message ChatBox..." maxlength="4000"></textarea>
+        <button class="send-btn" id="sendBtn" type="button" title="Send message">
+          <i class="fa-solid fa-arrow-up"></i>
+        </button>
+      </div>
+      <div class="composer-footer">
+        <span>Enter to send</span>
+        <span>Shift+Enter for newline</span>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="modal fade" id="renameChatModal" tabindex="-1" aria-labelledby="renameChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content chat-modal">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="renameChatModalLabel">Rename chat</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <p class="modal-copy">Give this conversation a clear title so it is easier to find later.</p>
+        <input id="renameChatInput" type="text" class="form-control form-control-lg" maxlength="80" autocomplete="off">
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-accent" id="renameChatSaveBtn">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteChatModal" tabindex="-1" aria-labelledby="deleteChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content chat-modal chat-modal-danger">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="deleteChatModalLabel">Delete chat</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <p class="modal-copy">This will permanently delete <strong id="deleteChatName">this conversation</strong> and its messages.</p>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="deleteChatConfirmBtn">Delete chat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exportChatModal" tabindex="-1" aria-labelledby="exportChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content chat-modal">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="exportChatModalLabel">Export chat</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <p class="modal-copy">Choose a format to download the current conversation.</p>
+        <div class="export-grid">
+          <button type="button" class="export-choice" data-export-format="txt">
+            <i class="fa-regular fa-file-lines"></i>
+            <span>TXT</span>
+            <small>Plain text transcript</small>
+          </button>
+          <button type="button" class="export-choice" data-export-format="pdf">
+            <i class="fa-regular fa-file-pdf"></i>
+            <span>PDF</span>
+            <small>Printable document</small>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="newChatModal" tabindex="-1" aria-labelledby="newChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content chat-modal">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="newChatModalLabel">Start new chat</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <p class="modal-copy">Choose a title and model before starting the conversation.</p>
+        <label class="modal-label" for="newChatTitleInput">Title</label>
+        <input id="newChatTitleInput" type="text" class="form-control form-control-lg mb-3" maxlength="80" placeholder="New chat" autocomplete="off">
+        <label class="modal-label" for="newChatModelSelect">Model</label>
+        <select id="newChatModelSelect" class="form-select form-select-lg">
+          {% for model in available_models %}
+          <option value="{{ model }}">{{ model }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-accent" id="createChatConfirmBtn">Create chat</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

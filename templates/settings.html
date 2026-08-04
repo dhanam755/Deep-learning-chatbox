@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Settings - ChatBox{% endblock %}
+{% block body %}
+<div class="settings-page">
+  <div class="settings-card" data-aos="fade-up">
+    <div class="brand-mark mb-3">ChatBox</div>
+    <h1>User Settings</h1>
+    <p>Review your profile, security posture, and session controls for this workspace.</p>
+
+    <div class="settings-grid">
+      <div class="setting-item">
+        <h2>Profile</h2>
+        <p><strong>{{ user.name if user else 'User' }}</strong><br>{{ user.email if user else '' }}</p>
+      </div>
+      <div class="setting-item">
+        <h2>Theme</h2>
+        <p>Light and dark mode are persisted locally across sessions.</p>
+      </div>
+      <div class="setting-item">
+        <h2>Security</h2>
+        <p>Sessions use Flask-Login, bcrypt password hashing, CSRF protection, and rate limiting.</p>
+      </div>
+      <div class="setting-item">
+        <h2>Models</h2>
+        <p>Groq model selection is available from the chat dashboard for every message stream.</p>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a class="btn btn-accent" href="{{ url_for('chat.dashboard') }}">Back to chat</a>
+      <a class="btn btn-outline-light" href="{{ url_for('auth.logout') }}">Logout</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,130 +1,59 @@
-from flask import Flask, render_template, request, jsonify, redirect, session
-import logging
+from __future__ import annotations
 
-from services.groq_service import get_groq_response
-from database.mongo import save_chat, get_chat_history
-from services.auth_service import register_user, login_user
+import os
 
-app = Flask(__name__)
-app.secret_key = "supersecretkey"
+from flask import Flask
+from flask_cors import CORS
 
-logging.basicConfig(level=logging.INFO)
+from config import Config
+from database.mongo import ensure_indexes
+from extensions import bcrypt, csrf, limiter, login_manager
+from services.auth_service import User
 
 
+@login_manager.user_loader
+def load_user(user_id: str):
+    return User.from_id(user_id)
 
-def get_bot_response(user_message):
+
+def create_app() -> Flask:
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
+    csrf.init_app(app)
+    limiter.init_app(app)
+    CORS(app, supports_credentials=True)
+
+    login_manager.login_view = "auth.login"
+    login_manager.session_protection = "strong"
+
     try:
-        bot_reply = get_groq_response(user_message)
+        ensure_indexes()
+        app.config["MONGO_READY"] = True
+    except RuntimeError as exc:
+        app.config["MONGO_READY"] = False
+        app.logger.warning("MongoDB initialization skipped at startup: %s", exc)
 
-        if not bot_reply:
-            return "I couldn't generate a response."
+    from routes.auth import auth_bp
+    from routes.chat import chat_bp
+    from routes.api import api_bp
 
-        return bot_reply
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(chat_bp)
+    app.register_blueprint(api_bp, url_prefix="/api")
 
-    except Exception as e:
-        logging.error(f"Error in bot response: {e}")
-        return "Sorry, something went wrong."
+    @app.context_processor
+    def inject_globals():
+        return {"available_models": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"]}
 
-
-
-
-@app.route("/")
-def home():
-    if "user" not in session:
-        return redirect("/login")
-    return render_template("chatgpt-full.html")
-
-
-@app.route("/chat")
-def chat():
-    if "user" not in session:
-        return redirect("/login")
-    return render_template("chatgpt-full.html")
+    return app
 
 
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form["username"]
-        email = request.form["email"]
-        password = request.form["password"]
-
-        register_user(username, email, password)
-
-        return redirect("/login")
-
-    return render_template("register.html")
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-
-        user = login_user(email, password)
-
-        if user:
-            session["user"] = email
-            return redirect("/")
-        else:
-            return "Invalid login"
-
-    return render_template("login.html")
-
-
-
-
-@app.route("/api/chat", methods=["POST"])
-def api_chat():
-    try:
-        if "user" not in session:
-            return jsonify({"response": "Please login first."})
-
-        data = request.get_json()
-        user_message = data.get("message", "")
-
-        if not user_message.strip():
-            return jsonify({"response": "Please type something."})
-
-        bot_response = get_bot_response(user_message)
-
-        if not bot_response:
-            bot_response = "I couldn't generate a response."
-
-        # Save chat with user email
-        save_chat(session["user"], user_message, bot_response)
-
-        print("BOT RESPONSE:", bot_response)
-
-        return jsonify({"response": bot_response})
-
-    except Exception as e:
-        logging.error(f"Chat route error: {e}")
-        return jsonify({"response": "Server error occurred."})
-
-
-
-
-@app.route("/api/history")
-def api_history():
-    if "user" not in session:
-        return jsonify([])
-
-    history = get_chat_history(session["user"])
-
-    return jsonify(history)
-
-
-
-@app.route("/logout")
-def logout():
-    session.pop("user", None)
-
-    return redirect("/login")
+app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    port = int(os.getenv("PORT", "5000"))
+    app.run(host="0.0.0.0", port=port, debug=os.getenv("FLASK_DEBUG", "0") == "1")

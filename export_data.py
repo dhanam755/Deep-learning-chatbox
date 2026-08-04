@@ -1,27 +1,51 @@
-import pandas as pd
-from database.mongo import collection   # 🔥 same collection object
+from __future__ import annotations
 
-# Fetch all records
-data = list(collection.find())
+import csv
+from pathlib import Path
+from typing import Iterable
 
-print("Number of records:", len(data))
+from database.mongo import chats, messages, users, serialize_chat, serialize_message, serialize_user
 
-if len(data) == 0:
-    print("⚠ No data found in MongoDB!")
-    exit()
 
-# Convert to DataFrame
-df = pd.DataFrame(data)
+OUTPUT_PATH = Path("chat_data.csv")
 
-# Remove MongoDB internal ID
-if "_id" in df.columns:
-    df = df.drop(columns=["_id"])
 
-# Convert timestamp column
-if "timestamp" in df.columns:
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
+def iter_export_rows() -> Iterable[dict]:
+    for message in messages.find().sort("timestamp", 1):
+        chat = chats.find_one({"_id": message.get("chat_id")})
+        user = users.find_one({"_id": chat.get("user_id")}) if chat else None
+        serialized_chat = serialize_chat(chat) if chat else {}
+        serialized_user = serialize_user(user) if user else {}
+        serialized_message = serialize_message(message)
 
-# Save CSV
-df.to_csv("chat_data.csv", index=False)
+        yield {
+            "user_name": serialized_user.get("name", ""),
+            "user_email": serialized_user.get("email", ""),
+            "chat_title": serialized_chat.get("title", ""),
+            "chat_model": serialized_chat.get("model", ""),
+            "message_role": serialized_message.get("role", ""),
+            "message_content": serialized_message.get("content", ""),
+            "message_timestamp": serialized_message.get("timestamp", ""),
+        }
 
-print("✅ Data exported successfully!")
+
+def export_csv(output_path: Path = OUTPUT_PATH) -> Path:
+    rows = list(iter_export_rows())
+    with output_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()) if rows else [
+            "user_name",
+            "user_email",
+            "chat_title",
+            "chat_model",
+            "message_role",
+            "message_content",
+            "message_timestamp",
+        ])
+        writer.writeheader()
+        writer.writerows(rows)
+    return output_path
+
+
+if __name__ == "__main__":
+    path = export_csv()
+    print(f"Exported chat data to {path.resolve()}")
